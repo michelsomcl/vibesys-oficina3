@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +23,17 @@ export const EditFornecedorDialog = ({ fornecedor, open, onOpenChange }: EditFor
   })
 
   const updateFornecedor = useUpdateFornecedor()
+
+  // Reset form data when fornecedor changes
+  useEffect(() => {
+    setFormData({
+      nome: fornecedor.nome,
+      cnpj: fornecedor.cnpj,
+      telefone: fornecedor.telefone || "",
+      email: fornecedor.email || "",
+      endereco: fornecedor.endereco || "",
+    })
+  }, [fornecedor])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

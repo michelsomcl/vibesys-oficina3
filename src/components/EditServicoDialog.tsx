@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,6 +20,14 @@ export const EditServicoDialog = ({ servico, open, onOpenChange }: EditServicoDi
   })
 
   const updateServico = useUpdateServico()
+
+  // Reset form data when servico changes
+  useEffect(() => {
+    setFormData({
+      nome: servico.nome,
+      valor_hora: servico.valor_hora.toString(),
+    })
+  }, [servico])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

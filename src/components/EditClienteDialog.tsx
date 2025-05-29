@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,6 +25,18 @@ export const EditClienteDialog = ({ cliente, open, onOpenChange }: EditClienteDi
   })
 
   const updateCliente = useUpdateCliente()
+
+  // Reset form data when cliente changes
+  useEffect(() => {
+    setFormData({
+      tipo: cliente.tipo,
+      nome: cliente.nome,
+      documento: cliente.documento,
+      telefone: cliente.telefone || "",
+      endereco: cliente.endereco || "",
+      aniversario: cliente.aniversario || "",
+    })
+  }, [cliente])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

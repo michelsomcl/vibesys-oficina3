@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,6 +21,15 @@ export const EditPecaDialog = ({ peca, open, onOpenChange }: EditPecaDialogProps
   })
 
   const updatePeca = useUpdatePeca()
+
+  // Reset form data when peca changes
+  useEffect(() => {
+    setFormData({
+      nome: peca.nome,
+      valor_unitario: peca.valor_unitario.toString(),
+      estoque: peca.estoque?.toString() || "0",
+    })
+  }, [peca])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

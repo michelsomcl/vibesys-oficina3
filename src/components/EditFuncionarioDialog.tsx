@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,6 +24,17 @@ export const EditFuncionarioDialog = ({ funcionario, open, onOpenChange }: EditF
   })
 
   const updateFuncionario = useUpdateFuncionario()
+
+  // Reset form data when funcionario changes
+  useEffect(() => {
+    setFormData({
+      nome: funcionario.nome,
+      documento: funcionario.documento,
+      categoria: funcionario.categoria,
+      telefone: funcionario.telefone || "",
+      endereco: funcionario.endereco || "",
+    })
+  }, [funcionario])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
