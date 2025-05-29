@@ -22,6 +22,8 @@ import {
 const Orcamentos = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [viewingOrcamento, setViewingOrcamento] = useState<any>(null)
+  const [editingOrcamento, setEditingOrcamento] = useState<any>(null)
 
   // Dados mock para demonstração
   const orcamentos = [
@@ -105,6 +107,14 @@ const Orcamentos = () => {
     return matchesSearch && matchesStatus
   })
 
+  const handleView = (orcamento: any) => {
+    setViewingOrcamento(orcamento)
+  }
+
+  const handleEdit = (orcamento: any) => {
+    setEditingOrcamento(orcamento)
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
@@ -187,10 +197,10 @@ const Orcamentos = () => {
                     R$ {orcamento.valor.toFixed(2).replace('.', ',')}
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => handleView(orcamento)}>
                       <Eye className="w-4 h-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(orcamento)}>
                       <Pencil className="w-4 h-4" />
                     </Button>
                     {orcamento.status === "Aprovado" && (
@@ -234,36 +244,130 @@ const Orcamentos = () => {
           </Card>
         ))}
       </div>
+
+      {/* Dialog para Visualizar Orçamento */}
+      <Dialog open={!!viewingOrcamento} onOpenChange={(open) => !open && setViewingOrcamento(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Visualizar Orçamento - {viewingOrcamento?.id}</DialogTitle>
+          </DialogHeader>
+          {viewingOrcamento && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Cliente</Label>
+                  <p className="text-sm text-muted-foreground">{viewingOrcamento.cliente}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Veículo</Label>
+                  <p className="text-sm text-muted-foreground">{viewingOrcamento.veiculo}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Data do Orçamento</Label>
+                  <p className="text-sm text-muted-foreground">{viewingOrcamento.dataOrcamento}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Validade</Label>
+                  <p className="text-sm text-muted-foreground">{viewingOrcamento.validade}</p>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Peças</h3>
+                  <div className="space-y-2">
+                    {viewingOrcamento.pecas.map((peca, index) => (
+                      <div key={index} className="flex justify-between border-b pb-2">
+                        <div>
+                          <p className="font-medium">{peca.nome}</p>
+                          <p className="text-sm text-muted-foreground">Qtd: {peca.quantidade}</p>
+                        </div>
+                        <p className="font-medium">R$ {(peca.quantidade * peca.valor).toFixed(2).replace('.', ',')}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Serviços</h3>
+                  <div className="space-y-2">
+                    {viewingOrcamento.servicos.map((servico, index) => (
+                      <div key={index} className="flex justify-between border-b pb-2">
+                        <div>
+                          <p className="font-medium">{servico.nome}</p>
+                          <p className="text-sm text-muted-foreground">Horas: {servico.horas}</p>
+                        </div>
+                        <p className="font-medium">R$ {(servico.horas * servico.valorHora).toFixed(2).replace('.', ',')}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <Badge className={getStatusColor(viewingOrcamento.status)}>
+                    <div className="flex items-center gap-1">
+                      {getStatusIcon(viewingOrcamento.status)}
+                      {viewingOrcamento.status}
+                    </div>
+                  </Badge>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">Valor Total</p>
+                  <p className="text-2xl font-bold text-primary">
+                    R$ {viewingOrcamento.valor.toFixed(2).replace('.', ',')}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog para Editar Orçamento */}
+      <Dialog open={!!editingOrcamento} onOpenChange={(open) => !open && setEditingOrcamento(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Editar Orçamento - {editingOrcamento?.id}</DialogTitle>
+          </DialogHeader>
+          {editingOrcamento && <OrcamentoForm orcamento={editingOrcamento} />}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
 
-const OrcamentoForm = () => {
+const OrcamentoForm = ({ orcamento }: { orcamento?: any }) => {
   return (
     <form className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="cliente">Cliente</Label>
-          <Select>
+          <Select defaultValue={orcamento?.cliente}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione o cliente" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1">João Silva</SelectItem>
-              <SelectItem value="2">Maria Santos</SelectItem>
-              <SelectItem value="3">Carlos Lima</SelectItem>
+              <SelectItem value="João Silva">João Silva</SelectItem>
+              <SelectItem value="Maria Santos">Maria Santos</SelectItem>
+              <SelectItem value="Carlos Lima">Carlos Lima</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
           <Label htmlFor="veiculo">Veículo</Label>
-          <Select>
+          <Select defaultValue={orcamento?.veiculo}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione o veículo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1">Honda Civic 2020 - ABC-1234</SelectItem>
-              <SelectItem value="2">Toyota Corolla 2019 - XYZ-5678</SelectItem>
+              <SelectItem value="Honda Civic 2020">Honda Civic 2020 - ABC-1234</SelectItem>
+              <SelectItem value="Toyota Corolla 2019">Toyota Corolla 2019 - XYZ-5678</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -272,11 +376,11 @@ const OrcamentoForm = () => {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="dataOrcamento">Data do Orçamento</Label>
-          <Input id="dataOrcamento" type="date" />
+          <Input id="dataOrcamento" type="date" defaultValue={orcamento?.dataOrcamento} />
         </div>
         <div>
           <Label htmlFor="validade">Validade</Label>
-          <Input id="validade" type="date" />
+          <Input id="validade" type="date" defaultValue={orcamento?.validade} />
         </div>
       </div>
 
@@ -332,7 +436,9 @@ const OrcamentoForm = () => {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline">Cancelar</Button>
-        <Button className="bg-primary hover:bg-primary/90">Salvar Orçamento</Button>
+        <Button className="bg-primary hover:bg-primary/90">
+          {orcamento ? "Atualizar Orçamento" : "Salvar Orçamento"}
+        </Button>
       </div>
     </form>
   )
