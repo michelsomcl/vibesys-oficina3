@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Building2, Plus, Search, Edit, Trash2, Phone, MapPin, Mail } from "lucide-react"
+import { Building2, Plus, Search, Pencil, Trash2, Phone, MapPin, Mail } from "lucide-react"
 import { useFornecedores, useCreateFornecedor, useDeleteFornecedor } from "@/hooks/useFornecedores"
 import { TablesInsert } from "@/integrations/supabase/types"
 import { EditFornecedorDialog } from "@/components/EditFornecedorDialog"
@@ -257,8 +257,8 @@ const Fornecedores = () => {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(fornecedor)}>
+                      <Pencil className="w-4 h-4" />
                     </Button>
                     <Button 
                       variant="outline" 

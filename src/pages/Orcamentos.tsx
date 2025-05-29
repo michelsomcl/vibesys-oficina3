@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,7 +11,7 @@ import {
   FileText, 
   Plus, 
   Search, 
-  Edit, 
+  Pencil, 
   Eye,
   CheckCircle,
   XCircle,
@@ -192,7 +191,7 @@ const Orcamentos = () => {
                       <Eye className="w-4 h-4" />
                     </Button>
                     <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
+                      <Pencil className="w-4 h-4" />
                     </Button>
                     {orcamento.status === "Aprovado" && (
                       <Button size="sm" className="bg-secondary hover:bg-secondary/90">

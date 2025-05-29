@@ -10,7 +10,7 @@ import {
   UserCheck, 
   Plus, 
   Search, 
-  Edit, 
+  Pencil, 
   Trash2, 
   Phone,
   MapPin,
@@ -20,11 +20,13 @@ import {
 } from "lucide-react"
 import { useFuncionarios, useDeleteFuncionario } from "@/hooks/useFuncionarios"
 import { FuncionarioForm } from "@/components/FuncionarioForm"
+import { EditFuncionarioDialog } from "@/components/EditFuncionarioDialog"
 
 const Funcionarios = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingFuncionario, setEditingFuncionario] = useState<any>(null)
 
   const { data: funcionarios = [], isLoading } = useFuncionarios()
   const deleteFuncionario = useDeleteFuncionario()
@@ -72,6 +74,10 @@ const Funcionarios = () => {
 
   const handleFormSuccess = () => {
     setIsDialogOpen(false)
+  }
+
+  const handleEdit = (funcionario: any) => {
+    setEditingFuncionario(funcionario)
   }
 
   if (isLoading) {
@@ -185,8 +191,8 @@ const Funcionarios = () => {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(funcionario)}>
+                      <Pencil className="w-4 h-4" />
                     </Button>
                     <Button 
                       variant="outline" 
@@ -203,6 +209,14 @@ const Funcionarios = () => {
           ))
         )}
       </div>
+
+      {editingFuncionario && (
+        <EditFuncionarioDialog
+          funcionario={editingFuncionario}
+          open={!!editingFuncionario}
+          onOpenChange={(open) => !open && setEditingFuncionario(null)}
+        />
+      )}
     </div>
   )
 }

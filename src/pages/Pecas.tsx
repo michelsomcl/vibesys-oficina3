@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -6,9 +5,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Package, Plus, Search, Edit, Trash2, DollarSign } from "lucide-react"
+import { Package, Plus, Search, Pencil, Trash2, DollarSign } from "lucide-react"
 import { usePecas, useCreatePeca, useDeletePeca } from "@/hooks/usePecas"
 import { TablesInsert } from "@/integrations/supabase/types"
+import { EditPecaDialog } from "@/components/EditPecaDialog"
 
 const PecaForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [pecaData, setPecaData] = useState<TablesInsert<"pecas">>({
@@ -93,6 +93,7 @@ const PecaForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 const Pecas = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingPeca, setEditingPeca] = useState<any>(null)
 
   const { data: pecas = [], isLoading } = usePecas()
   const deletePeca = useDeletePeca()
@@ -109,6 +110,10 @@ const Pecas = () => {
 
   const handleFormSuccess = () => {
     setIsDialogOpen(false)
+  }
+
+  const handleEdit = (peca: any) => {
+    setEditingPeca(peca)
   }
 
   if (isLoading) {
@@ -195,8 +200,8 @@ const Pecas = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(peca)}>
+                      <Pencil className="w-4 h-4" />
                     </Button>
                     <Button 
                       variant="outline" 
@@ -213,6 +218,14 @@ const Pecas = () => {
           ))
         )}
       </div>
+
+      {editingPeca && (
+        <EditPecaDialog
+          peca={editingPeca}
+          open={!!editingPeca}
+          onOpenChange={(open) => !open && setEditingPeca(null)}
+        />
+      )}
     </div>
   )
 }

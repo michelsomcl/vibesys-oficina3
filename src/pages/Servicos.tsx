@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -6,9 +5,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Wrench, Plus, Search, Edit, Trash2, Clock, DollarSign } from "lucide-react"
+import { Wrench, Plus, Search, Pencil, Trash2, Clock, DollarSign } from "lucide-react"
 import { useServicos, useCreateServico, useDeleteServico } from "@/hooks/useServicos"
 import { TablesInsert } from "@/integrations/supabase/types"
+import { EditServicoDialog } from "@/components/EditServicoDialog"
 
 const ServicoForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [servicoData, setServicoData] = useState<TablesInsert<"servicos">>({
@@ -79,6 +79,7 @@ const ServicoForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 const Servicos = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingServico, setEditingServico] = useState<any>(null)
 
   const { data: servicos = [], isLoading } = useServicos()
   const deleteServico = useDeleteServico()
@@ -95,6 +96,10 @@ const Servicos = () => {
 
   const handleFormSuccess = () => {
     setIsDialogOpen(false)
+  }
+
+  const handleEdit = (servico: any) => {
+    setEditingServico(servico)
   }
 
   if (isLoading) {
@@ -183,8 +188,8 @@ const Servicos = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(servico)}>
+                      <Pencil className="w-4 h-4" />
                     </Button>
                     <Button 
                       variant="outline" 
@@ -201,6 +206,14 @@ const Servicos = () => {
           ))
         )}
       </div>
+
+      {editingServico && (
+        <EditServicoDialog
+          servico={editingServico}
+          open={!!editingServico}
+          onOpenChange={(open) => !open && setEditingServico(null)}
+        />
+      )}
     </div>
   )
 }
